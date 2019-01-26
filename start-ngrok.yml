@@ -14,7 +14,7 @@
         state: directory
 
     - name: Build ngrok image
-      shell: docker build -t qs-ngrok --build-arg ngrok_domain={{ domain }} https://raw.githubusercontent.com/charact3/qs-ngrok/master/docker/Dockerfile
+      shell: docker build -t qs-ngrok --build-arg ngrok_domain={{ domain }} goos={{ goos }} goarch={{ goarch }} https://raw.githubusercontent.com/charact3/qs-ngrok/master/docker/Dockerfile
 
     - name: Build ngrok
       docker_container:
@@ -31,9 +31,20 @@
           TUNNEL_PORT: "{{ tunnel_port }}"
           HTTP_PORT: "{{ http_port }}"
           HTTPS_PORT: "{{ https_port }}"
-        command: "bash /release/run_server.sh"
+        command: "/bin/sh -c /ngrok/run_server.sh"
       tags:
         - start_ngrok
 
     - name: Docker copy ngrok client
-      shell: docker cp qs-ngrok:/ngrok/bin/ /tmp/qs-ngrok/
+      shell: docker cp qs-ngrok:/ngrok/bin/ngrok /tmp/qs-ngrok/
+
+    - name: Fetch ngrok client
+      fetch:
+        src: /tmp/qs-ngrok/ngrok
+        dest: ./
+        flat: yes
+
+    - name: Create ngrok config
+      local_action: template src=ngrok.cfg.j2 dest=ngrok.cfg
+      tags:
+        - x

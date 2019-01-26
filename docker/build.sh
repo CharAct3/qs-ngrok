@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 cd /
 git clone https://github.com/inconshreveable/ngrok.git
@@ -14,9 +14,10 @@ cp rootCA.pem /ngrok/assets/client/tls/ngrokroot.crt
 
 # 2. Build Ngrok
 cd /ngrok
-make release-server release-client
+make release-server
+make release-client
 
-cat > /release/run_server.sh <<EOF
+cat > /ngrok/run_server.sh <<EOF
 #!/bin/sh
 DOMAIN=${DOMAIN}
 TUNNEL_PORT=${TUNNEL_PORT}
@@ -25,4 +26,4 @@ HTTPS_PORT=${HTTPS_PORT}
 /ngrok/bin/ngrokd -tlsKey=/ngrok/tls/device.key -tlsCrt=/ngrok/tls/device.crt -domain="\$DOMAIN" -httpAddr=":\$HTTP_PORT" -httpsAddr=":\$HTTPS_PORT" -tunnelAddr=":\$TUNNEL_PORT"
 EOF
 
-chmod 755 /release/run_server.sh
+chmod 755 /ngrok/run_server.sh
