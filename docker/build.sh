@@ -15,14 +15,10 @@ cp rootCA.pem /ngrok/assets/client/tls/ngrokroot.crt
 # 2. Build Ngrok
 cd /ngrok
 make release-server
-make release-client
+GOOS=$GOOS GOARCH=$GOARCH make release-client
 
 cat > /ngrok/run_server.sh <<EOF
 #!/bin/sh
-DOMAIN=${DOMAIN}
-TUNNEL_PORT=${TUNNEL_PORT}
-HTTP_PORT=${HTTP_PORT}
-HTTPS_PORT=${HTTPS_PORT}
 /ngrok/bin/ngrokd -tlsKey=/ngrok/tls/device.key -tlsCrt=/ngrok/tls/device.crt -domain="\$DOMAIN" -httpAddr=":\$HTTP_PORT" -httpsAddr=":\$HTTPS_PORT" -tunnelAddr=":\$TUNNEL_PORT"
 EOF
 

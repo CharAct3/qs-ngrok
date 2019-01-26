@@ -14,7 +14,10 @@
         state: directory
 
     - name: Build ngrok image
-      shell: docker build -t qs-ngrok --build-arg ngrok_domain={{ domain }} goos={{ goos }} goarch={{ goarch }} https://raw.githubusercontent.com/charact3/qs-ngrok/master/docker/Dockerfile
+      shell: >
+        docker build -t qs-ngrok --build-arg ngrok_domain={{ domain }}
+        --build-arg goos={{ goos }} --build-arg goarch={{ goarch }}
+        https://raw.githubusercontent.com/charact3/qs-ngrok/master/docker/Dockerfile
 
     - name: Build ngrok
       docker_container:
