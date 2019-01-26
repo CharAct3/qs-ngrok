@@ -1,0 +1,2 @@
+[servers]
+# hostname http_port=80 https_port=443 tunnel_port=4443 domain=example.com
