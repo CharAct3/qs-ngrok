@@ -19,7 +19,15 @@
         --build-arg goos={{ goos }} --build-arg goarch={{ goarch }}
         https://raw.githubusercontent.com/charact3/qs-ngrok/master/docker/Dockerfile
 
-    - name: Build ngrok
+        #    - name: Build ngrok client
+        #      docker_container:
+        #        image: qs-ngrok
+        #        name: qs-ngrok-client
+        #        state: started
+        #        command: /bin/sh -c "cd /ngrok && GOOS=darwin make release-client && sleep 100000"
+        #      tags: [client]
+
+    - name: Run ngrok server
       docker_container:
         image: qs-ngrok
         name: qs-ngrok
@@ -39,15 +47,16 @@
         - start_ngrok
 
     - name: Docker copy ngrok client
-      shell: docker cp qs-ngrok:/ngrok/bin/ngrok /tmp/qs-ngrok/
+      shell: docker cp qs-ngrok:/ngrok/bin /tmp/qs-ngrok/
+      tags: [client]
 
     - name: Fetch ngrok client
       fetch:
-        src: /tmp/qs-ngrok/ngrok
+        src: /tmp/qs-ngrok/bin/{{ goos }}_{{ goarch }}/{{ 'ngrok.exe' if goos == 'windows' else 'ngrok'}}
         dest: ./
         flat: yes
+      tags: [client]
 
     - name: Create ngrok config
       local_action: template src=ngrok.cfg.j2 dest=ngrok.cfg
-      tags:
-        - x
+      tags: [client]

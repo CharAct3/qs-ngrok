@@ -15,7 +15,7 @@ cp rootCA.pem /ngrok/assets/client/tls/ngrokroot.crt
 # 2. Build Ngrok
 cd /ngrok
 make release-server
-GOOS=$GOOS GOARCH=$GOARCH make release-client
+GOOS=$goos GOARCH=$goarch make release-client
 
 cat > /ngrok/run_server.sh <<EOF
 #!/bin/sh
